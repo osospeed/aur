@@ -1,0 +1,36 @@
+# This file is part of BlackArch Linux ( http://blackarch.org ).
+# See COPYING for license details.
+
+pkgname='ghostpack-seatbelt'
+pkgver=1.73fcff8
+pkgrel=1
+epoch=1
+pkgdesc='C# project that performs a number of security oriented host-survey "safety checks".'
+groups=('blackarch' 'blackarch-windows')
+arch=('any')
+url='https://github.com/GhostPack/Seatbelt'
+license=('BSD3-Clause')
+makedepends=('git' 'msbuild-stable')
+source=('git+https://github.com/GhostPack/Seatbelt.git')
+sha1sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/Seatbelt"
+
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
+
+build() {
+  cd "$srcdir/Seatbelt"
+  msbuild /t:build /v:diag /p:configuration=release,outputPath=./ Seatbelt.sln
+}
+
+package() {
+  cd "$srcdir/Seatbelt"
+  ls
+  mkdir -p "$pkgdir/usr/share/windows/ghostpack/seatbelt"
+
+  install -Dm644 Seatbelt/Seatbelt.exe "$pkgdir/usr/share/windows/ghostpack/seatbelt/"
+  install -Dm644 README.md "$pkgdir/usr/share/doc/ghostpack/seatbelt/README.md"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/ghostpack/seatbelt/LICENSE"
+}
